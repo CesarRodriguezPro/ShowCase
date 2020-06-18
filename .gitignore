@@ -1,0 +1,6 @@
+node_modules/
+*/mime
+*/mime.cmd
+*/mime.ps1
+*.DS_Store
+.env
