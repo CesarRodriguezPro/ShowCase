@@ -19,7 +19,7 @@ app.use(upload());
 
 
 // database set up ////////////////////////////////////////////////
-mongoose.connect('mongodb://localhost:27017/JavierAccounts', {
+mongoose.connect('mongodb+srv://merlin:1W1llRemenberTh1s@db1-9vtfe.mongodb.net/wild-heartDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -44,7 +44,7 @@ const postSchema = {
 const Post = mongoose.model("Post", postSchema);
 ///////////////////////////////////////////////////////////////
 
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
   console.log("Server started on port 3000");
 });
 
