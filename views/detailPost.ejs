@@ -1,0 +1,23 @@
+<%- include("./forDetailPost/header") -%>
+
+
+
+<div></div>
+<div class="card mb-3" style="margin-top:89px">
+    <img src="<%= post.imagePathForWeb %>" class="card-img-top" alt="<%= post.formatedName %>">
+    <div class="card-body">
+      <h5 class="card-title"><%= post.name %></h5>
+      <p class="card-text"><%= post.info %></p>
+      <p class="card-text">Camera Make <%= post.cameraMake %> --  Camera Model <%= post.cameraModel %></p>
+       <p class="card-text">Shutter Speed <%= post.shutterSpeed %> -- ISO <%= post.ISO %></p>
+    <p class="card-text">size <%= post.width %>x<%= post.height %></p>
+    </div>
+  </div>
+
+
+
+</div>
+
+<%- include("./forHomePage/footer") -%>
+<%- include("./forHomePage/subFooter") -%>
+
