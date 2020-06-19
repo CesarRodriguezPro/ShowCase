@@ -1,0 +1,52 @@
+<%- include("./forCompose/header") -%>
+
+
+<h1>Compose</h1>
+    <div class="container" style="padding-top:10%;">
+<form action="/compose" method="post" enctype="multipart/form-data" class="form-group">
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="info" name="name" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="info">info</label>
+        <input type="text" id="info" name="info" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="cameraMake">Camera Make</label>
+        <input type="text" id="cameraMake" name="cameraMake" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="cameraModel">Camera Model</label>
+        <input type="text" id="cameraModel" name="cameraModel" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="focalLength">Focal Length</label>
+        <input type="text" id="focalLength" name="focalLenght" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="apperture">Apperture</label>
+        <input type="text" id="apperture" name="apperture" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="shutterSpeed">Shutter Speed</label>
+        <input type="text" id="shutterSpeed" name="shutterSpeed" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="iso">Iso</label>
+        <input type="text" id="iso" name="iso" class="form-control">
+    </div>
+    <div class="input-group">
+        <input type="file" id="imgUpload" name="imgUpload" required>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" style="margin-top: 2%;">Publish</button>
+    </div>
+</form>
+    </div>
+
+
+<%- include("./forHomePage/footer") -%>
+<%- include("./forHomePage/subFooter") -%>
