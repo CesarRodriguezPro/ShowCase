@@ -11,8 +11,8 @@
   </div>
   <div class="row">
     <div class="col-lg-4 col-sm-6 mb-4">
-<% posts.forEach(post=> { %>
 
+<% posts.forEach(post=> { %>
   <form action="/delete" method="post">
     <div class="card" style="width: 18rem;">
     <img src="<%= post.imagePathForWeb %>" class="card-img-top" alt="<%= post.formatedName %>">
@@ -27,6 +27,7 @@
   </div>
 </form>
 <% }); %>
+
   </div>
   </div>
 </div>
