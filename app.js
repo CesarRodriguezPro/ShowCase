@@ -7,19 +7,20 @@ const upload = require('express-fileupload');
 const app = express();
 const path = require('path');
 const sharp = require('sharp');
-var sizeOf = require('image-size');
+const sizeOf = require('image-size');
+const fs = require('fs');
 
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(express.static("public"));
+app.use(express.static(__dirname + '/public'));
 app.use(upload());
 
 
 // database set up ////////////////////////////////////////////////
-mongoose.connect('mongodb+srv://merlin:1W1llRemenberTh1s@db1-9vtfe.mongodb.net/wild-heartDB', {
+mongoose.connect('mongodb://localhost:27017/wild-heartDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -101,14 +102,13 @@ app.post('/compose', function (req, res) {
         posts.save();
       }
     });
-
     res.redirect('/compose');
   } else {
     res.send('didnt work');
   };
 });
 
-app.get('/:postid', function (req, res) {
+app.get('/post/:postid', function (req, res) {
   const postid = req.params.postid;
   Post.findById(postid, function(err,post){
     if(err){
@@ -119,7 +119,7 @@ app.get('/:postid', function (req, res) {
   })
 });
 
-app.get('/detele', function(req, res){
+app.get('/delete', function(req, res){
   Post.find({}, function(err,posts){
     if(!err){
       res.render('delete', {posts:posts});
@@ -127,5 +127,18 @@ app.get('/detele', function(req, res){
       res.send('error');
     }
   });
+});
+
+app.post('/delete', function(req, res){
+  ////////////// working in this part 
+
+  const postId= req.body.postId;
+  Post.findById(postId, function(post){
+    console.log(post);
+    fs.unlink(post.imagePath)
+    fs.unlink(post.imagelowResolutionPath);
+    Post.findByIdAndDelete(postId);
+    console.log('everything was delete')
+  })
 
 });
