@@ -9,7 +9,9 @@ const path = require('path');
 const sharp = require('sharp');
 const sizeOf = require('image-size');
 const fs = require('fs');
-
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
@@ -17,13 +19,21 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static(__dirname + '/public'));
 app.use(upload());
-
+app.use(session({
+  secret: 'there in not place like home',
+  resave: false,
+  saveUninitialized: false,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // database set up ////////////////////////////////////////////////
 mongoose.connect('mongodb://localhost:27017/wild-heartDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+
+mongoose.set('useCreateIndex', true);
 const postSchema = {
   name: String,
   formatedName: String,
@@ -43,6 +53,17 @@ const postSchema = {
   height: String,
 }
 const Post = mongoose.model("Post", postSchema);
+
+
+const userSchema = new mongoose.Schema({
+  email: String,
+  password: String
+});
+userSchema.plugin(passportLocalMongoose);
+const User = mongoose.model("User", userSchema);
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 ///////////////////////////////////////////////////////////////
 
 app.listen(process.env.PORT || 3000, function () {
@@ -50,7 +71,6 @@ app.listen(process.env.PORT || 3000, function () {
 });
 
 app.get('/', function (req, res) {
-
   Post.find({}, function (err, posts) {
     if (!err) {
       res.render('home', {
@@ -63,9 +83,11 @@ app.get('/', function (req, res) {
 
 });
 
-app.get('/compose', function (req, res) {
-  res.render('compose');
-});
+app.get('/compose',
+  passport.authenticate('local', {
+    successRedirect: '/compose',
+    failureRedirect: '/login'
+  }));
 
 app.post('/compose', function (req, res) {
   var name = _.camelCase(req.body.name);
@@ -125,17 +147,22 @@ app.get('/post/:postid', function (req, res) {
   })
 });
 
-app.get('/delete', function (req, res) {
-  Post.find({}, function (err, posts) {
-    if (!err) {
-      res.render('delete', {
-        posts: posts
-      });
-    } else {
-      res.send('error');
-    }
-  });
-});
+app.get('/delete', function (req, res, next) {
+  if(req.isAuthenticated()){
+       Post.find({}, function (err, posts) {
+      if (!err) {
+        res.render('delete', {
+          posts: posts
+        });
+      } else {
+        res.send('error');
+      }
+    });
+  }else{
+    res.redirect('login');
+  }
+})
+
 
 app.post('/delete', function (req, res) {
   const postId = req.body.postId;
@@ -155,4 +182,49 @@ app.post('/delete', function (req, res) {
       // console.log('everything was delete')
     }
   })
+});
+
+app.get("/login", function (req, res) {
+  res.render('login');
+});
+
+app.post('/login', function (req, res) {
+  const user = new User({
+    username: req.body.username,
+    passport: req.body.password,
+  });
+
+  req.login(user, function (err) {
+    if (err) {
+      console.log(err)
+    } else {
+      passport.authenticate("local")(req, res, function () {
+        res.render('compose');;
+      })
+    }
+  })
+});
+
+app.get("/register", function (req, res) {
+  res.render('register');
+});
+
+app.post('/register', function (req, res) {
+  User.register({
+    username: req.body.username
+  }, req.body.password, function (err, user) {
+    if (err) {
+      console.log(err);
+      res.redirect('/register');
+    } else {
+      passport.authenticate('local')(req, res, function () {
+        res.redirect('compose');
+      });
+    }
+  });
+});
+
+app.get("/logout", function (req, res) {
+  req.logOut();
+  res.redirect('/');
 });

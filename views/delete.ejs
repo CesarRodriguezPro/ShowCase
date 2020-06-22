@@ -1,35 +1,32 @@
-
-
-<%- include("./partials/header") -%>
+<%- include("./forCompose/header") -%>
 
 
 
 <div class="container">
   <div class="text-center">
-      <h2 class="section-heading text-uppercase">For Delete</h2>
-      <h3 class="section-subheading text-muted">please choose the items for deletion.</h3>
+    <h2 class="section-heading text-uppercase">For Delete</h2>
+    <h3 class="section-subheading text-muted">please choose the items for deletion.</h3>
   </div>
   <div class="row">
     <div class="col-lg-4 col-sm-6 mb-4">
-
-<% posts.forEach(post=> { %>
-  <form action="/delete" method="post">
-    <div class="card" style="width: 18rem;">
-    <img src="<%= post.imagePathForWeb %>" class="card-img-top" alt="<%= post.formatedName %>">
-    <div class="card-body">
-      <input type="hidden" name="postId" value="<%= post._id %>"> </input>
-      <h5 class="card-title"><%= post.name %></h5>
-      <p class="card-text"><%= post.info %></p>
-    <p class="card-text">size <%= post.width %>x<%= post.height %></p>
-    <button type="submit" class="btn btn-dark">delete</button>
+      <% posts.forEach(post=> { %>
+      <form action="/delete" method="post">
+        <div class="card" style="width: 18rem;">
+          <img src="<%= post.imagePathForWeb %>" class="card-img-top" alt="<%= post.formatedName %>">
+          <div class="card-body">
+            <input type="hidden" name="postId" value="<%= post._id %>"> </input>
+            <h5 class="card-title"><%= post.name %></h5>
+            <p class="card-text"><%= post.info %></p>
+            <p class="card-text">size <%= post.width %>x<%= post.height %></p>
+            <button type="submit" class="btn btn-dark">delete</button>
+          </div>
+        </div>
     </div>
-    </div>
-  </div>
-</form>
-<% }); %>
+    </form>
+    <% }); %>
 
   </div>
-  </div>
+</div>
 </div>
 
 
