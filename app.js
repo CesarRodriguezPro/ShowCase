@@ -148,8 +148,8 @@ app.get('/post/:postid', function (req, res) {
 });
 
 app.get('/delete', function (req, res, next) {
-  if(req.isAuthenticated()){
-       Post.find({}, function (err, posts) {
+  if (req.isAuthenticated()) {
+    Post.find({}, function (err, posts) {
       if (!err) {
         res.render('delete', {
           posts: posts
@@ -158,11 +158,10 @@ app.get('/delete', function (req, res, next) {
         res.send('error');
       }
     });
-  }else{
+  } else {
     res.redirect('login');
   }
 })
-
 
 app.post('/delete', function (req, res) {
   const postId = req.body.postId;
@@ -206,7 +205,18 @@ app.post('/login', function (req, res) {
 });
 
 app.get("/register", function (req, res) {
-  res.render('register');
+
+  const RegisterOpen = false
+
+  if (RegisterOpen) {
+    res.render('register');
+  } else {
+    if (req.isAuthenticated()) {
+      res.render('Register')
+    } else {
+      res.redirect('login');
+    }
+  }
 });
 
 app.post('/register', function (req, res) {
