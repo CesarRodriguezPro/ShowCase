@@ -11,7 +11,7 @@ const sizeOf = require('image-size');
 const fs = require('fs');
 const session = require("express-session");
 const passport = require("passport");
-const passportLocalMongoose = require("passport-local-mongoose");
+const Schema = require("./Schemas");
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
@@ -32,35 +32,9 @@ mongoose.connect('mongodb://localhost:27017/wild-heartDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
-
 mongoose.set('useCreateIndex', true);
-const postSchema = {
-  name: String,
-  formatedName: String,
-  info: String,
-  views: Number,
-  downloads: Number,
-  cameraMake: String,
-  cameraModel: String,
-  focalLength: String,
-  aperture: String,
-  shutterSpeed: String,
-  ISO: Number,
-  imagePath: String,
-  imagelowResolutionPath: String,
-  imagePathForWeb: String,
-  width: String,
-  height: String,
-}
-const Post = mongoose.model("Post", postSchema);
-
-
-const userSchema = new mongoose.Schema({
-  email: String,
-  password: String
-});
-userSchema.plugin(passportLocalMongoose);
-const User = mongoose.model("User", userSchema);
+const Post = mongoose.model("Post", Schema.postSchema );
+const User = mongoose.model("User", Schema.userSchema);
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -83,8 +57,7 @@ app.get('/', function (req, res) {
 
 });
 
-app.get('/compose',
-  passport.authenticate('local', {
+app.get('/compose',passport.authenticate('local', {
     successRedirect: '/compose',
     failureRedirect: '/login'
   }));
@@ -94,14 +67,13 @@ app.post('/compose', function (req, res) {
   if (req.files) {
     var file = req.files.imgUpload; // file send from compose.ejs
     var fileName = file.name; // name on the file when is uploaded 
-
     var rawImagePath = path.join("./uploads/images/", fileName);
     var extentionInImage = path.extname(rawImagePath); // this extract the extention in the file uploded 
     var imageName = path.basename(rawImagePath, extentionInImage)
     var lowResolutionPath = "/public/img/forWeb/" + _.camelCase(imageName) + extentionInImage; // to save in public folder after is reduce size
     var imagePathForWeb = "img/forWeb/" + _.camelCase(imageName) + extentionInImage; // path to render pics in templace.
     var imagePathFormated = "/uploads/images/" + _.camelCase(imageName) + extentionInImage;
-
+  
     file.mv("." + imagePathFormated, function (err) {
       if (!err) {
         sharp("." + imagePathFormated).resize({
@@ -124,6 +96,8 @@ app.post('/compose', function (req, res) {
           imagePathForWeb: imagePathForWeb,
           width: dimensions.width,
           height: dimensions.height,
+          category:req.body.category,
+          tags:req.body.tags.split(' '),
         });
         posts.save();
       }
@@ -132,6 +106,10 @@ app.post('/compose', function (req, res) {
   } else {
     res.send('didnt work');
   };
+});
+
+app.get('/post',function(req, res){
+  res.render('post');
 });
 
 app.get('/post/:postid', function (req, res) {
@@ -206,7 +184,7 @@ app.post('/login', function (req, res) {
 
 app.get("/register", function (req, res) {
 
-  const RegisterOpen = false
+  const RegisterOpen = false;
 
   if (RegisterOpen) {
     res.render('register');
