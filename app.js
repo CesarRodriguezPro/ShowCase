@@ -33,7 +33,7 @@ mongoose.connect('mongodb://localhost:27017/wild-heartDB', {
   useUnifiedTopology: true
 });
 mongoose.set('useCreateIndex', true);
-const Post = mongoose.model("Post", Schema.postSchema );
+const Post = mongoose.model("Post", Schema.postSchema);
 const User = mongoose.model("User", Schema.userSchema);
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
@@ -44,175 +44,181 @@ app.listen(process.env.PORT || 3000, function () {
   console.log("Server started on port 3000");
 });
 
-app.get('/', function (req, res) {
-  Post.find({}, function (err, posts) {
-    if (!err) {
-      res.render('home', {
-        posts: posts
-      });
-    } else {
-      res.send('error');
-    }
-  });
 
-});
-
-app.get('/compose',passport.authenticate('local', {
-    successRedirect: '/compose',
-    failureRedirect: '/login'
-  }));
-
-app.post('/compose', function (req, res) {
-  var name = _.camelCase(req.body.name);
-  if (req.files) {
-    var file = req.files.imgUpload; // file send from compose.ejs
-    var fileName = file.name; // name on the file when is uploaded 
-    var rawImagePath = path.join("./uploads/images/", fileName);
-    var extentionInImage = path.extname(rawImagePath); // this extract the extention in the file uploded 
-    var imageName = path.basename(rawImagePath, extentionInImage)
-    var lowResolutionPath = "/public/img/forWeb/" + _.camelCase(imageName) + extentionInImage; // to save in public folder after is reduce size
-    var imagePathForWeb = "img/forWeb/" + _.camelCase(imageName) + extentionInImage; // path to render pics in templace.
-    var imagePathFormated = "/uploads/images/" + _.camelCase(imageName) + extentionInImage;
-  
-    file.mv("." + imagePathFormated, function (err) {
-      if (!err) {
-        sharp("." + imagePathFormated).resize({
-          height: 1000
-        }).toFile("." + lowResolutionPath);
-        var dimensions = sizeOf("." + imagePathFormated);
-
-        const posts = new Post({
-          name: req.body.name,
-          formatedName: _.camelCase(imageName),
-          info: req.body.info,
-          cameraMake: req.body.cameraMake,
-          cameraModel: req.body.cameraModel,
-          focalLength: req.body.focalLength,
-          aperture: req.body.aperture,
-          shutterSpeed: req.body.shutterSpeed,
-          ISO: req.body.iso,
-          imagePath: imagePathFormated,
-          imagelowResolutionPath: lowResolutionPath,
-          imagePathForWeb: imagePathForWeb,
-          width: dimensions.width,
-          height: dimensions.height,
-          category:req.body.category,
-          tags:req.body.tags.split(' '),
-        });
-        posts.save();
-      }
-    });
-    res.redirect('/compose');
-  } else {
-    res.send('didnt work');
-  };
-});
-
-app.get('/post',function(req, res){
-  res.render('post');
-});
-
-app.get('/post/:postid', function (req, res) {
-  const postid = req.params.postid;
-  Post.findById(postid, function (err, post) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render('detailPost', {
-        post: post
-      })
-    }
-  })
-});
-
-app.get('/delete', function (req, res, next) {
-  if (req.isAuthenticated()) {
+app.route('/')
+  .get(function (req, res) {
     Post.find({}, function (err, posts) {
       if (!err) {
-        res.render('delete', {
+        res.render('home', {
           posts: posts
         });
       } else {
         res.send('error');
       }
     });
-  } else {
-    res.redirect('login');
-  }
-})
-
-app.post('/delete', function (req, res) {
-  const postId = req.body.postId;
-  Post.findById(postId, function (err, post) {
-    if (!err) {
-      console.log(post);
-      fs.unlink(__dirname + post.imagePath, function (err) {
-        err ? console.log(err) : console.log('images full image');
-      })
-      fs.unlink(__dirname + post.imagelowResolutionPath, function (err) {
-        err ? console.log(err) : console.log('images erase low image');
-      });
-      Post.findByIdAndDelete(postId, function (err) {
-        err ? console.log(err) : console.log('item in the database was delete.');
-      });
-      res.redirect('delete');
-      // console.log('everything was delete')
-    }
-  })
-});
-
-app.get("/login", function (req, res) {
-  res.render('login');
-});
-
-app.post('/login', function (req, res) {
-  const user = new User({
-    username: req.body.username,
-    passport: req.body.password,
   });
 
-  req.login(user, function (err) {
-    if (err) {
-      console.log(err)
+app.route('/compose')
+  .get(function (req, res) {
+    if (req.isAuthenticated()) {
+      res.render('compose');
     } else {
-      passport.authenticate("local")(req, res, function () {
-        res.render('compose');;
-      })
+      res.render('login');
     }
   })
-});
+  .post(function (req, res) {
+    var name = _.camelCase(req.body.name);
+    if (req.files) {
+      var file = req.files.imgUpload; // file send from compose.ejs
+      var fileName = file.name; // name on the file when is uploaded 
+      var rawImagePath = path.join("./uploads/images/", fileName);
+      var extentionInImage = path.extname(rawImagePath); // this extract the extention in the file uploded 
+      var imageName = path.basename(rawImagePath, extentionInImage)
+      var lowResolutionPath = "/public/img/forWeb/" + _.camelCase(imageName) + extentionInImage; // to save in public folder after is reduce size
+      var imagePathForWeb = "img/forWeb/" + _.camelCase(imageName) + extentionInImage; // path to render pics in templace.
+      var imagePathFormated = "/uploads/images/" + _.camelCase(imageName) + extentionInImage;
 
-app.get("/register", function (req, res) {
+      file.mv("." + imagePathFormated, function (err) {
+        if (!err) {
+          sharp("." + imagePathFormated).resize({
+            height: 1000
+          }).toFile("." + lowResolutionPath);
+          var dimensions = sizeOf("." + imagePathFormated);
+          const posts = new Post({
+            name: req.body.name,
+            formatedName: _.camelCase(imageName),
+            info: req.body.info,
+            cameraMake: req.body.cameraMake,
+            cameraModel: req.body.cameraModel,
+            focalLength: req.body.focalLength,
+            aperture: req.body.aperture,
+            shutterSpeed: req.body.shutterSpeed,
+            ISO: req.body.iso,
+            imagePath: imagePathFormated,
+            imagelowResolutionPath: lowResolutionPath,
+            imagePathForWeb: imagePathForWeb,
+            width: dimensions.width,
+            height: dimensions.height,
+            category: req.body.category,
+            tags: req.body.tags.split(' '),
+          });
+          posts.save();
+          res.redirect('/compose');
+        }
+      });
+    } else {
+      res.send('didnt work');
+    };
+  });
 
-  const RegisterOpen = false;
+app.route('/post')
+  .get(function (req, res) {
+    res.render('post');
+  })
 
-  if (RegisterOpen) {
-    res.render('register');
-  } else {
+app.route('/post/:postid')
+  .get(function (req, res) {
+    const postid = req.params.postid;
+    Post.findById(postid, function (err, post) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render('detailPost', {
+          post: post
+        })
+      }
+    })
+  });
+
+app.route('/delete')
+  .get(function (req, res, next) {
     if (req.isAuthenticated()) {
-      res.render('Register')
+      Post.find({}, function (err, posts) {
+        if (!err) {
+          res.render('delete', {
+            posts: posts
+          });
+        } else {
+          res.send('error');
+        }
+      });
     } else {
       res.redirect('login');
     }
-  }
-});
-
-app.post('/register', function (req, res) {
-  User.register({
-    username: req.body.username
-  }, req.body.password, function (err, user) {
-    if (err) {
-      console.log(err);
-      res.redirect('/register');
-    } else {
-      passport.authenticate('local')(req, res, function () {
-        res.redirect('compose');
-      });
-    }
+  })
+  .post(function (req, res) {
+    const postId = req.body.postId;
+    Post.findById(postId, function (err, post) {
+      if (!err) {
+        fs.unlink(__dirname + post.imagePath, function (err) {
+          err ? console.log(err) : console.log('images full image');
+        })
+        fs.unlink(__dirname + post.imagelowResolutionPath, function (err) {
+          err ? console.log(err) : console.log('images erase low image');
+        });
+        Post.findByIdAndDelete(postId, function (err) {
+          err ? console.log(err) : console.log('item in the database was delete.');
+        });
+        res.redirect('delete');
+      }
+    })
   });
-});
 
-app.get("/logout", function (req, res) {
-  req.logOut();
-  res.redirect('/');
-});
+app.route("/login")
+  .get(function (req, res) {
+    res.render('login');
+  })
+  .post(function (req, res) {
+    const user = new User({
+      username: req.body.username,
+      passport: req.body.password,
+    });
+
+
+
+
+
+    req.login(user, function (err) {
+      if (err) {
+        console.log(err)
+      } else {
+        passport.authenticate("local")(req, res, function () {
+          res.render('compose');;
+        })
+      }
+    })
+  });
+
+app.route('/register')
+  .get(function (req, res) {
+    const RegisterOpen = false;
+    if (RegisterOpen) {
+      res.render('register');
+    } else {
+      if (req.isAuthenticated()) {
+        res.render('Register')
+      } else {
+        res.redirect('login');
+      }
+    }
+  })
+  .post(function (req, res) {
+    User.register({
+      username: req.body.username
+    }, req.body.password, function (err, user) {
+      if (err) {
+        console.log(err);
+        res.redirect('/register');
+      } else {
+        passport.authenticate('local')(req, res, function () {
+          res.redirect('compose');
+        });
+      }
+    });
+  });
+
+app.route('/logout')
+  .get(function (req, res) {
+    req.logOut();
+    res.redirect('/');
+  });
