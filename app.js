@@ -47,15 +47,22 @@ app.listen(process.env.PORT || 3000, function () {
 
 app.route('/')
   .get(function (req, res) {
-    Post.find({}, function (err, posts) {
-      if (!err) {
-        res.render('home', {
-          posts: posts
-        });
-      } else {
-        res.send('error');
-      }
-    });
+    var listPost = [];
+
+
+    Promise.all([
+      Post.find({category:"unitedStates"}).limit(6),
+      Post.find({category:"europe"}).limit(6),
+      Post.find({category:"mobil"}).limit(6),
+    ]).then(results=>{
+      console.log(results);
+    res.render('home', {posts: results});
+    }
+
+    );
+
+
+    console.log(listPost);
   });
 
 app.route('/compose')
@@ -99,7 +106,7 @@ app.route('/compose')
             imagePathForWeb: imagePathForWeb,
             width: dimensions.width,
             height: dimensions.height,
-            category: req.body.category,
+            category: _.camelCase(req.body.category),
             tags: req.body.tags.split(' '),
           });
           posts.save();
@@ -111,10 +118,13 @@ app.route('/compose')
     };
   });
 
-app.route('/post')
+app.route('/category/:category')
   .get(function (req, res) {
-    res.render('post');
-  })
+    const categoryForQuery = req.params.category;
+    Post.find({category:_.camelCase(categoryForQuery)}, function(err, posts){
+     res.render('postByCategory', {posts:posts});
+    })
+  });
 
 app.route('/post/:postid')
   .get(function (req, res) {

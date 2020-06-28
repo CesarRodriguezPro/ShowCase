@@ -1,15 +1,47 @@
-                
-        <!-- Portfolio Grid-->
-        <section class="page-section bg-light" id="portfolio">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Portfolio</h2>
-                    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
-                </div>
-                <div class="row">
-                   <% posts.forEach(function(post){ %>
-                        <%- include("./singlePost", {post:post}); %>
-                    <% }); %> 
-                </div>
-            </div>
-        </section>
+                <!-- Portfolio Grid-->
+                <section class="page-section bg-light" id="portfolio">
+                    <div class="container">
+
+<% posts.forEach(item => { %>
+   <%= item %>
+ 
+
+<% }) %>
+
+
+                        <div class="text-center">
+                            <h2 class="section-heading text-uppercase">United States</h2>
+                            <h3 class="section-subheading text-muted">Beautiful fullsize Photographs From the United
+                                States</h3>
+                        </div>
+                        <div class="row">
+                            <% posts.forEach(function(post){ %>
+                           <%  if(post.category === "unitedStates"){ %>
+                             <%- include("./singlePost", {post:post}); %>
+                            <% }}); %>
+                           
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="text-center">
+                            <h2 class="section-heading text-uppercase">Europe</h2>
+                            <h3 class="section-subheading text-muted">Beautiful Continents with Misterius beuty.</h3>
+                        </div>
+                        <div class="row">
+                            <% posts.forEach(function(post){ %>
+                            <%- include("./singlePost", {post:post}); %>
+                            <% }); %>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="text-center">
+                            <h2 class="section-heading text-uppercase">Mobil</h2>
+                            <h3 class="section-subheading text-muted">Beautiful Photos for your phone.</h3>
+                        </div>
+                        <div class="row">
+                            <% posts.forEach(function(post){ %>
+                            <%- include("./singlePost", {post:post}); %>
+                            <% }); %>
+                        </div>
+                    </div>
+                </section>
