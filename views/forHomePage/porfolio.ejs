@@ -1,47 +1,52 @@
                 <!-- Portfolio Grid-->
-                <section class="page-section bg-light" id="portfolio">
-                    <div class="container">
-
-<% posts.forEach(item => { %>
-   <%= item %>
- 
-
-<% }) %>
+                <section class="page-section " id="portfolio">
 
 
+                    <div class="container jumbotron">
+                        <div class="card-deck">
                         <div class="text-center">
                             <h2 class="section-heading text-uppercase">United States</h2>
                             <h3 class="section-subheading text-muted">Beautiful fullsize Photographs From the United
                                 States</h3>
                         </div>
                         <div class="row">
-                            <% posts.forEach(function(post){ %>
-                           <%  if(post.category === "unitedStates"){ %>
+                            <% posts[0].forEach(function(post){ %>
                              <%- include("./singlePost", {post:post}); %>
-                            <% }}); %>
-                           
+                            <% }); %>                        
+                        </div>
+                        <div>
+                            <a href="/category/unitedStates">go to the whole collection of  United States</a>
                         </div>
                     </div>
-                    <div class="container">
+                    </div>
+
+
+                    <div class="container jumbotron">
                         <div class="text-center">
                             <h2 class="section-heading text-uppercase">Europe</h2>
                             <h3 class="section-subheading text-muted">Beautiful Continents with Misterius beuty.</h3>
                         </div>
                         <div class="row">
-                            <% posts.forEach(function(post){ %>
+                            <% posts[1].forEach(function(post){ %>
                             <%- include("./singlePost", {post:post}); %>
                             <% }); %>
                         </div>
+                        <div>
+                            <a href="/category/europe">go to the whole collection of  Europe</a>
+                        </div>
                     </div>
-                    <div class="container">
+                    <div class="container jumbotron">
                         <div class="text-center">
                             <h2 class="section-heading text-uppercase">Mobil</h2>
                             <h3 class="section-subheading text-muted">Beautiful Photos for your phone.</h3>
                         </div>
                         <div class="row">
-                            <% posts.forEach(function(post){ %>
+                            <% posts[2].forEach(function(post){ %>
                             <%- include("./singlePost", {post:post}); %>
                             <% }); %>
+                        </div>
+                        <div>
+                            <a href="/category/mobile">go to the whole collection of  Mobile</a>
                         </div>
                     </div>
                 </section>

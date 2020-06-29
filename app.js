@@ -47,22 +47,14 @@ app.listen(process.env.PORT || 3000, function () {
 
 app.route('/')
   .get(function (req, res) {
-    var listPost = [];
-
-
     Promise.all([
       Post.find({category:"unitedStates"}).limit(6),
       Post.find({category:"europe"}).limit(6),
-      Post.find({category:"mobil"}).limit(6),
-    ]).then(results=>{
-      console.log(results);
+      Post.find({category:"mobile"}).limit(6),
+    ]).then(results=>{      
     res.render('home', {posts: results});
     }
-
     );
-
-
-    console.log(listPost);
   });
 
 app.route('/compose')
