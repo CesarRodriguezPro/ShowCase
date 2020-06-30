@@ -1,0 +1,15 @@
+
+
+<form action="/downloading" method="post">
+<div class="form-group">
+  <label for="downloadSelector">Example select</label>
+  <input name=id type='hidden' value='<%= postid %>'></input>
+  <select class="form-control" id="downloadSelector" name='picSizeSelector'>
+    <option>Fullsize</option>
+    <option>50%</option>
+  </select>
+  <div class="form-group">
+    <button type="submit" class="btn btn-dark" style="margin-top: 2%;">Download</button>
+  </div>
+</div>
+</form>

@@ -1,9 +1,8 @@
 <%- include("./forHomePage/header") -%>
-<%- include("./forHomePage/masthead")-%>
-<%- include("./forHomePage/porfolio.ejs", {posts:posts})-%>
+<%- include("./forHomePage/masthead", {categories:categories})-%>
+<%- include("./forHomePage/porfolio.ejs", {posts:posts, categories:categories})-%>
 <%- include("./forHomePage/team")-%>
 <%- include("./forHomePage/clients")-%> 
-
 <%- include("./forHomePage/footer")-%>
 <%- include("./partials/subFooter")-%>
 

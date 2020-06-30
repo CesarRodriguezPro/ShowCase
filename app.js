@@ -13,6 +13,9 @@ const session = require("express-session");
 const passport = require("passport");
 const Schema = require("./Schemas");
 
+
+
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
@@ -40,11 +43,28 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 ///////////////////////////////////////////////////////////////
 
+const categories = [{
+  name : 'unitedStates',
+  title : 'United States',
+  info : 'Beautiful fullsize Photographs From the United States',
+  position : 0,
+}, {
+  name : 'europe',
+  title : 'Europe',
+  info : 'Beautiful Continents with Misterius beauty.',
+  position : 1,
+}, {
+  name : 'mobile',
+  title : 'Mobile',
+  info : 'Beautiful Photos for your phone.',
+  position : 2,
+}];
+
+
 app.listen(process.env.PORT || 3000, function () {
   console.log("Server started on port 3000");
 });
-
-
+ 
 app.route('/')
   .get(function (req, res) {
     Promise.all([
@@ -52,7 +72,7 @@ app.route('/')
       Post.find({category:"europe"}).limit(6),
       Post.find({category:"mobile"}).limit(6),
     ]).then(results=>{      
-    res.render('home', {posts: results});
+    res.render('home', {posts: results, categories:categories });
     }
     );
   });
@@ -60,7 +80,7 @@ app.route('/')
 app.route('/compose')
   .get(function (req, res) {
     if (req.isAuthenticated()) {
-      res.render('compose');
+      res.render('compose', {categories:categories});
     } else {
       res.render('login');
     }
@@ -70,12 +90,12 @@ app.route('/compose')
     if (req.files) {
       var file = req.files.imgUpload; // file send from compose.ejs
       var fileName = file.name; // name on the file when is uploaded 
-      var rawImagePath = path.join("./uploads/images/", fileName);
+      var rawImagePath = path.join("./public/img/fullsize/", fileName);
       var extentionInImage = path.extname(rawImagePath); // this extract the extention in the file uploded 
       var imageName = path.basename(rawImagePath, extentionInImage)
       var lowResolutionPath = "/public/img/forWeb/" + _.camelCase(imageName) + extentionInImage; // to save in public folder after is reduce size
       var imagePathForWeb = "img/forWeb/" + _.camelCase(imageName) + extentionInImage; // path to render pics in templace.
-      var imagePathFormated = "/uploads/images/" + _.camelCase(imageName) + extentionInImage;
+      var imagePathFormated = "/public/img/fullsize/" + _.camelCase(imageName) + extentionInImage;
 
       file.mv("." + imagePathFormated, function (err) {
         if (!err) {
@@ -118,6 +138,17 @@ app.route('/category/:category')
     })
   });
 
+app.route('/downloading')
+.get((req, res)=>{
+  res.render('downloading')
+})
+.post((req, res)=>{
+Post.findById(req.body.id, (err, post)=>{
+  // working in dowload files
+  res.redirect('downloading');
+});
+});
+
 app.route('/post/:postid')
   .get(function (req, res) {
     const postid = req.params.postid;
@@ -131,7 +162,7 @@ app.route('/post/:postid')
       }
     })
   });
-
+  
 app.route('/delete')
   .get(function (req, res, next) {
     if (req.isAuthenticated()) {
@@ -175,17 +206,12 @@ app.route("/login")
       username: req.body.username,
       passport: req.body.password,
     });
-
-
-
-
-
     req.login(user, function (err) {
       if (err) {
         console.log(err)
       } else {
         passport.authenticate("local")(req, res, function () {
-          res.render('compose');;
+          res.redirect('compose');;
         })
       }
     })

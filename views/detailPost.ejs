@@ -1,34 +1,40 @@
 <%- include('./partials/header')%>
-    <body id="page-top">
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-dark " id="mainNav">
-            <div class="container">
-                <a class="navbar-brand js-scroll-trigger" href="/"><img src="/img/logo/logo.png" alt="" /></a><button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu<i class="fas fa-bars ml-1"></i></button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav text-uppercase ml-auto">
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#portfolio">Portfolio</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#about">About</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#team">Team</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#contact">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+
+<body id="page-top">
+  <!-- Navigation-->
+  <nav class="navbar navbar-expand-lg navbar-dark " id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="/"><img src="/img/logo/logo.png" alt="" /></a><button
+        class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu<i
+          class="fas fa-bars ml-1"></i></button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav text-uppercase ml-auto">
+          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#portfolio">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#about">About</a></li>
+          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#team">Team</a></li>
+          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
 
-<div class="container">
-<div class="card mb-12">
-    <img src="/<%= post.imagePathForWeb %>" class="card-img-top" alt="<%= post.formatedName %>">
-    <div class="card-body">
-      <h5 class="card-title"><%= post.name %></h5>
-      <p class="card-text"><%= post.info %></p>
-      <p class="card-text">Camera Make <%= post.cameraMake %> --  Camera Model <%= post.cameraModel %></p>
-       <p class="card-text">Shutter Speed <%= post.shutterSpeed %> -- ISO <%= post.ISO %></p>
-    <p class="card-text">size <%= post.width %>x<%= post.height %></p>
+  <div class="container">
+    <div class="card mb-12">
+      <img src="/<%= post.imagePathForWeb %>" class="detailCard" alt="<%= post.formatedName %>">
+      <div class="card-body">
+        <h5 class="card-title"><%= post.name %></h5>
+        <p class="card-text"><%= post.info %></p>
+        <p class="card-text">Camera Make <%= post.cameraMake %> -- Camera Model <%= post.cameraModel %></p>
+        <p class="card-text">Shutter Speed <%= post.shutterSpeed %> -- ISO <%= post.ISO %></p>
+        <p class="card-text">size <%= post.width %>x<%= post.height %></p>
+        <%- include('./partials/downloadSection', {postid:post._id})%>
+      </div>
+      </div>
+      
     </div>
   </div>
-</div>
-<%- include("./forHomePage/footer") -%>
-<%- include("./partials/subFooter") -%>
-
+  <%- include("./forHomePage/footer") -%>
+  <%- include("./partials/subFooter") -%>

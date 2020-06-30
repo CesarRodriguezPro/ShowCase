@@ -1,20 +1,15 @@
 
-<div class="col-lg-4 col-sm-6 mb-4">
+<div class="col-lg-4 col-sm-4 mb-4 col-6">
 <div class="card img-thumbnail " >
+  <a href="/post/<%= post._id %>">
     <img src="../<%= post.imagePathForWeb %>" class="card-img-top" alt="<%= post.formatedName %>">
+  </a>
     <div class="card-body">
       <input type="hidden" name="postId" value="<%= post._id %>"> </input>
       <h5 class="card-title"><%= post.name %></h5>
       <p class="card-text"><%= post.info %></p>
       <p class="card-text">size <%= post.width %>x<%= post.height %></p>
-      <div class="form-group">
-        <label for="downloadSelector">Example select</label>
-        <select class="form-control" id="downloadSelector">
-          <option>Fullsize</option>
-          <option>50%</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-dark">Download</button>
+      <%- include('../partials/downloadSection', {postid:post._id})%>
     </div>
   </div>
 </div>
