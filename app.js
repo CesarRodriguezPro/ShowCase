@@ -14,8 +14,6 @@ const passport = require("passport");
 const Schema = require("./Schemas");
 
 
-
-
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
@@ -145,6 +143,7 @@ app.route('/downloading')
 .post((req, res)=>{
 Post.findById(req.body.id, (err, post)=>{
   // working in dowload files
+  console.log(post);
   res.redirect('downloading');
 });
 });
