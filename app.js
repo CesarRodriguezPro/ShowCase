@@ -143,7 +143,6 @@ app.route('/downloading')
 .post((req, res)=>{
 Post.findById(req.body.id, (err, post)=>{
   // working in dowload files
-  console.log(post);
   res.redirect('downloading');
 });
 });
