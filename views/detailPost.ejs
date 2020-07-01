@@ -27,8 +27,6 @@
       <div class="card-body">
         <h5 class="card-title"><%= post.name %></h5>
         <p class="card-text"><%= post.info %></p>
-        <p class="card-text">Camera Make <%= post.cameraMake %> -- Camera Model <%= post.cameraModel %></p>
-        <p class="card-text">Shutter Speed <%= post.shutterSpeed %> -- ISO <%= post.ISO %></p>
         <p class="card-text">size <%= post.width %>x<%= post.height %></p>
         <%- include('./partials/downloadSection', {postid:post._id})%>
       </div>

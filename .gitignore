@@ -4,3 +4,6 @@ node_modules/
 */mime.ps1
 *.DS_Store
 .env
+public/img/forWeb/*.jpg
+public/img/fullsize/*.jpg
+connectToServer.command
