@@ -97,9 +97,9 @@ app.route('/compose')
 
       file.mv("." + imagePathFormated, function (err) {
         if (!err) {
-          sharp("." + imagePathFormated).resize({
+          sharp(__dirname + imagePathFormated).resize({
             height: 1000
-          }).toFile("." + lowResolutionPath);
+          }).toFile(__dirname + lowResolutionPath);
           var dimensions = sizeOf("." + imagePathFormated);
           const posts = new Post({
             name: req.body.name,
@@ -131,15 +131,19 @@ app.route('/category/:category')
   });
 
 app.route('/downloading')
-.get((req, res)=>{
+  .get((req, res)=>{
   res.render('downloading')
-})
-.post((req, res)=>{
-Post.findById(req.body.id, (err, post)=>{
-  // working in dowload files
-  res.redirect('downloading');
-});
-});
+  })
+  .post((req, res)=>{
+    Post.findById(req.body.id, (err, post)=>{
+      
+      let picturePath = __dirname + post.imagePath;
+      console.log(picturePath);
+      
+      res.sendFile(picturePath);
+      res.redirect('downloading');
+    });
+  });
 
 app.route('/post/:postid')
   .get(function (req, res) {
