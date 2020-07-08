@@ -42,43 +42,53 @@ passport.deserializeUser(User.deserializeUser());
 ///////////////////////////////////////////////////////////////
 
 const categories = [{
-  name : 'unitedStates',
-  title : 'United States',
-  info : 'Beautiful fullsize Photographs From the United States',
-  position : 0,
+  name: 'unitedStates',
+  title: 'United States',
+  info: 'Beautiful fullsize Photographs From the United States',
+  position: 0,
 }, {
-  name : 'europe',
-  title : 'Europe',
-  info : 'Beautiful Continents with Misterius beauty.',
-  position : 1,
+  name: 'europe',
+  title: 'Europe',
+  info: 'Beautiful Continents with Misterius beauty.',
+  position: 1,
 }, {
-  name : 'mobile',
-  title : 'Mobile',
-  info : 'Beautiful Photos for your phone.',
-  position : 2,
+  name: 'mobile',
+  title: 'Mobile',
+  info: 'Beautiful Photos for your phone.',
+  position: 2,
 }];
 
 
 app.listen(process.env.PORT || 3000, function () {
   console.log("Server started on port 3000");
 });
- 
+
 app.route('/')
   .get(function (req, res) {
     Promise.all([
-      Post.find({category:"unitedStates"}).limit(6),
-      Post.find({category:"europe"}).limit(6),
-      Post.find({category:"mobile"}).limit(6),
-    ]).then(results=>{      
-    res.render('home', {posts: results, categories:categories });
-    }
-    );
+      Post.find({
+        category: "unitedStates"
+      }).limit(6),
+      Post.find({
+        category: "europe"
+      }).limit(6),
+      Post.find({
+        category: "mobile"
+      }).limit(6),
+    ]).then(results => {
+      res.render('home', {
+        posts: results,
+        categories: categories
+      });
+    });
   });
 
 app.route('/compose')
   .get(function (req, res) {
     if (req.isAuthenticated()) {
-      res.render('compose', {categories:categories});
+      res.render('compose', {
+        categories: categories
+      });
     } else {
       res.render('login');
     }
@@ -99,7 +109,14 @@ app.route('/compose')
         if (!err) {
           sharp(__dirname + imagePathFormated).resize({
             height: 1000
-          }).toFile(__dirname + lowResolutionPath);
+          }).toFile(__dirname + lowResolutionPath, (err, info) => {
+            if (err) {
+              res.render('error', {
+                err: err
+              });
+            }
+          });
+
           var dimensions = sizeOf("." + imagePathFormated);
           const posts = new Post({
             name: req.body.name,
@@ -115,6 +132,8 @@ app.route('/compose')
           });
           posts.save();
           res.redirect('/compose');
+        } else {
+          console.log(err);
         }
       });
     } else {
@@ -125,22 +144,25 @@ app.route('/compose')
 app.route('/category/:category')
   .get(function (req, res) {
     const categoryForQuery = req.params.category;
-    Post.find({category:_.camelCase(categoryForQuery)}, function(err, posts){
-     res.render('postByCategory', {posts:posts});
+    Post.find({
+      category: _.camelCase(categoryForQuery)
+    }, function (err, posts) {
+      res.render('postByCategory', {
+        posts: posts
+      });
     })
   });
 
 app.route('/downloading')
-  .get((req, res)=>{
-  res.render('downloading')
+  .get((req, res) => {
+    res.render('downloading')
   })
-  .post((req, res)=>{
-    Post.findById(req.body.id, (err, post)=>{
-      
+  .post((req, res) => {
+    Post.findById(req.body.id, (err, post) => {
+
       let picturePath = __dirname + post.imagePath;
       console.log(picturePath);
-      
-      res.sendFile(picturePath);
+      res.status(200).sendFile(picturePath);
       res.redirect('downloading');
     });
   });
@@ -158,7 +180,7 @@ app.route('/post/:postid')
       }
     })
   });
-  
+
 app.route('/delete')
   .get(function (req, res, next) {
     if (req.isAuthenticated()) {
