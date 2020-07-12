@@ -66,15 +66,9 @@ app.listen(process.env.PORT || 3000, function () {
 app.route('/')
   .get(function (req, res) {
     Promise.all([
-      Post.find({
-        category: "unitedStates"
-      }).limit(6),
-      Post.find({
-        category: "europe"
-      }).limit(6),
-      Post.find({
-        category: "mobile"
-      }).limit(6),
+      Post.find({category: "unitedStates"}).limit(6).sort({ CreatedOn: -1 }),
+      Post.find({category: "europe"}).limit(6).sort({ CreatedOn: -1 }),
+      Post.find({category: "mobile"}).limit(6).sort({ CreatedOn: -1 }),
     ]).then(results => {
       res.render('home', {
         posts: results,
